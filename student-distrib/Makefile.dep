@@ -1,0 +1,27 @@
+boot.o: boot.S multiboot.h x86_desc.h types.h
+intr_hdl_.o: intr_hdl_.S
+paging_.o: paging_.S
+sys_call_handler.o: sys_call_handler.S
+x86_desc.o: x86_desc.S x86_desc.h types.h
+exce_hdl.o: exce_hdl.c exce_hdl.h lib.h types.h systemcall.h file_sys.h \
+  rtc.h i8259.h keyboard.h
+file_sys.o: file_sys.c file_sys.h types.h lib.h keyboard.h paging.h \
+  systemcall.h rtc.h i8259.h scheduler.h
+i8259.o: i8259.c i8259.h types.h lib.h
+idt.o: idt.c multiboot.h types.h x86_desc.h lib.h i8259.h debug.h tests.h \
+  idt.h sys_call_handler.h exce_hdl.h keyboard.h rtc.h scheduler.h
+kernel.o: kernel.c multiboot.h types.h x86_desc.h lib.h i8259.h debug.h \
+  tests.h idt.h sys_call_handler.h keyboard.h rtc.h paging.h file_sys.h \
+  systemcall.h scheduler.h
+keyboard.o: keyboard.c keyboard.h lib.h types.h i8259.h systemcall.h \
+  file_sys.h rtc.h paging.h scheduler.h
+lib.o: lib.c lib.h types.h keyboard.h paging.h scheduler.h i8259.h
+paging.o: paging.c paging.h types.h
+rtc.o: rtc.c rtc.h lib.h types.h i8259.h systemcall.h file_sys.h \
+  keyboard.h scheduler.h
+scheduler.o: scheduler.c scheduler.h i8259.h types.h file_sys.h paging.h \
+  systemcall.h rtc.h lib.h keyboard.h x86_desc.h
+systemcall.o: systemcall.c systemcall.h file_sys.h types.h rtc.h lib.h \
+  i8259.h keyboard.h x86_desc.h paging.h scheduler.h
+tests.o: tests.c tests.h x86_desc.h types.h lib.h exce_hdl.h keyboard.h \
+  rtc.h i8259.h paging.h file_sys.h systemcall.h

@@ -1,0 +1,59 @@
+ECE 391 MP3 bug log
+
+03/18 bug: keyboard firing twice at times for seemingly no reason
+      by: Ruian Pan
+      solution: get the keyboard scancode twice in the getscancode function, fixed it
+03/20 bug: booting loop when enabling paging
+      by: Xinyi Gu
+      solution: map the kernel address to the correct place and assign correct priviledge bit(Supervisor) to it.
+03/29 bug: Exception after halt, couldn't restore to previous process.
+      by: Carl Zhang, Ke Sun
+      solution: Saved %ebp for the previous process, and restore after.
+04/05 bug: curr_pcb returns the wrong pointer, and basic stdin and stdout do not work
+      by: Xinyi Gu, Ruian Pan
+      solution: a confusion between new_pcb and curr_pcb, also did not update the PCB esp correctly
+04/05 bug: weird pagefault during testing
+      by: Carl Zhang
+      solution: found out that paging actually had priviledge levels, changed paging.h accordingly
+04/09 bug: vidmap cannot pass the syserr test
+      by: Xinyi Gu
+      solution: before mapping, checking whether the input falls into the range of kernel page
+04/09 bug: fish failed to open 2 files simultaneously. The reason lies in the file system driver. We didn't pass in the fd for the
+           file being read or write, which causes trouble when we opened 2 files and tried to read them at the same time.
+      by: Carl Zhang
+      solution: Added fd in the PCB which is assigned by the systemcall read or write to indicate which file we are readin, and
+                read the file in the individual driver functions to avoid reading chaos.
+04/19 bug: typing on the keyboard does not print onto the current displayed terminal, rather, on the current scheduled terminal
+      By: Ruian Pan
+      solution: keyboard flag added to allow putc to know whether the call comes from keyboard handler
+04/19 bug: add rtc virtualization, but the frequency we actually get is not correctly
+      by: Ke Sun
+      solution: the max frequency cannot be 8192 and should be 1024.
+04/22 bug: Execution on one shell would scramble %esp and %ebp stored prior to scheduling. Operation sequence was wrong with scheduling
+      by: Carl Zhang, Ke Sun
+      solution: Save the current process info right after the interrupt which scheduled it or launched the shell.
+04/26 bug: Exception 1 popped out during grep. The reason lies in rtc virtualization. We divide the default frequency by the set frequency
+           indicated in the file_position in rtc file. And fops are mapped to rtc's operations for grep, which didn't write the correct
+           frequency at the beginning.
+      by: Carl Zhang, Ke Sun
+      solution: set a default frequency in the file_position for rtc file.
+04/26 bug: Exception 13 and 14 popped after halt in a process. The reason was that halt didn't resume to the previous process correctly
+      by: Carl Zhang
+      solution: Resume process as empty in the curr_terminal_pid array.
+04/26 bug: Execution on one shell causes other terminals to report exception, due to multiple terminals enters execute upon 1 enter click
+      by: Carl Zhang
+      solution: terminal read should only proceed on the enter click in the current terminal
+04/27 bug: fish appears in multiple terminal, mapping to video memory directly causes trouble
+      by: Carl Zhang, Ruian Pan
+      solution: changed the video memory mapping. Each terminal has different address for vidmap.
+04/28 bug: fail to malloc space larger than 4mb
+      by: Xinyi Gu
+      solution: map to page_directory directly instead of multiple page_tables
+      bug: fail to malloc after calling free
+      by: Xinyi Gu
+      solution: keep track of merged free space by adding the previous block and next block to the struct
+05/01 bug: fail to malloc two small spaces into one page
+      by: Xinyi Gu
+      solution: assign cache size and cache address to each memory block struct
+05/02 bug: mouse coordinate shows very large number
+	fix: firstly have a boundary of coordinates before we change it, secondly, change the uint data type to char to avoid negative number being recognized as a really large positive one
